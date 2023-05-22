@@ -2,5 +2,11 @@
   "name": "text-editing-ai",
   "version": "1.0.0",
   "dependencies": {
+    "ts-node": "^10.9.1",
+    "@types/node": "^20.2.1",
+    "openai": "^3.2.1"
+  },
+  "scripts": {
+    "start": "ts-node main.ts"
   }
 }
