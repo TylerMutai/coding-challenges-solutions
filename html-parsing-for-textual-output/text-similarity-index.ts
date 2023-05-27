@@ -25,7 +25,7 @@ function editDistance(s1: string, s2: string) {
   return costs[s2.length];
 }
 
-export async function getSimilarityIndex(s1: string, s2: string) {
+async function getSimilarityIndex(s1: string, s2: string) {
   let longer = s1;
   let shorter = s2;
   if (s1.length < s2.length) {
@@ -38,3 +38,5 @@ export async function getSimilarityIndex(s1: string, s2: string) {
   }
   return (longerLength - editDistance(longer, shorter)) / longerLength;
 }
+
+module.exports = {getSimilarityIndex}

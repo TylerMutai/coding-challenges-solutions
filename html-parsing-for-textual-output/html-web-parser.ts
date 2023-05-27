@@ -1,7 +1,8 @@
 import {load} from "cheerio";
 import puppeteer from "puppeteer";
-import fs from "fs";
 import {fetchAndSaveContent, getLineSeparator} from "./process-html-content";
+
+const {Worker} = require("worker_threads");
 
 async function parseAndDownloadLinks(targetUrl: string, html: string, outputFolder: string) {
   // Use Cheerio to parse the static HTML
@@ -65,12 +66,30 @@ async function parseAndDownloadLinks(targetUrl: string, html: string, outputFold
     overallContent += hc[1]
   }
 
-  // run getting similarity index for each textual content in a separate thread to improve performance.
-  for (const hc of htmlContent) {
-    new Worker(
-      __dirname + `/save-html-content-to-file.ts?link=${hc[0]}&output=${outputFolder}&textContent=${hc[1]}&overallContent=${overallContent}`,
-    );
-  }
+  return new Promise((resolve, reject) => {
+    for (const hc of htmlContent) {
+
+      // run getting similarity index for each textual content in a separate thread to improve performance.
+      const worker = new Worker(
+        __dirname + `/save-html-content-to-file.ts`,
+        {
+          workerData: {
+            link: hc[0],
+            outputFolder,
+            textContent: hc[1],
+            overallContent: overallContent
+          }
+        }
+      );
+      worker.on('message', resolve);
+      worker.on('error', reject);
+      worker.on('exit', (code: number) => {
+        if (code !== 0)
+          reject(new Error(`Worker stopped with exit code ${code}`));
+      });
+    }
+  });
+
 }
 
 const DEFAULT_OUTPUT_FOLDER = "/tmp/html-web-parser/output";

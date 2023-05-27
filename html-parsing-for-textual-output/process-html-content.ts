@@ -1,5 +1,7 @@
-import axios from "axios/index";
-import {Cheerio, load} from "cheerio";
+import {Cheerio} from "cheerio";
+
+const axios = require("axios")
+const cheerio = require('cheerio');
 
 export function getLineSeparator() {
   return "\n------------------------------------------------\n";
@@ -11,7 +13,7 @@ function getUrlDomain(url: string) {
 }
 
 function extractText(html: string): string {
-  const $ = load(html);
+  const $ = cheerio.load(html);
   const text = getTextFromNode($("body"));
 
   return text.trim();
@@ -51,7 +53,6 @@ export async function fetchAndSaveContent(targetUrl: string, link: string): Prom
     console.info(`Link ignored: ${link}${getLineSeparator()}`)
     return overallContent;
   }
-  console.info(getLineSeparator());
   try {
     // Fetch the content
     const response = await axios.get(link);
@@ -64,6 +65,7 @@ export async function fetchAndSaveContent(targetUrl: string, link: string): Prom
   } catch (error) {
     console.error(`Error fetching content from ${link}:`, (error as any)?.message);
   }
+  console.info(`Link processed: ${link}`)
   console.info(getLineSeparator())
   return overallContent;
 }
