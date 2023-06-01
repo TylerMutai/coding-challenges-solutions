@@ -42,6 +42,7 @@ function extractText(html) {
 const IGNORED_LINKS = [
     "#"
 ];
+// returns index 0 as the filename and index 1 as the text content.
 function fetchAndSaveContent(targetUrl, link) {
     return __awaiter(this, void 0, void 0, function* () {
         let overallContent = ["", ""];
@@ -53,8 +54,10 @@ function fetchAndSaveContent(targetUrl, link) {
             return overallContent;
         }
         try {
+            // Fetch the content
             const response = yield axios.get(link);
             const content = response.data;
+            // Extract text from the HTML content
             const textContent = extractText(content);
             overallContent = [link, textContent];
         }
@@ -67,4 +70,3 @@ function fetchAndSaveContent(targetUrl, link) {
     });
 }
 exports.fetchAndSaveContent = fetchAndSaveContent;
-//# sourceMappingURL=process-html-content.js.map

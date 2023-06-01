@@ -3,6 +3,7 @@ import puppeteer from "puppeteer";
 import {fetchAndSaveContent, getLineSeparator} from "./process-html-content";
 
 const {Worker} = require("worker_threads");
+const fs = require('fs')
 
 async function parseAndDownloadLinks(targetUrl: string, html: string, outputFolder: string) {
   // Use Cheerio to parse the static HTML
