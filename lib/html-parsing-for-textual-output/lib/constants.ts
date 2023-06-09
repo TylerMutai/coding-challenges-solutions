@@ -1,0 +1,4 @@
+export const DEFAULT_OUTPUT_FOLDER = "/tmp/html-web-parser/"
+export const DEFAULT_OUTPUT_FOLDER_HTML = DEFAULT_OUTPUT_FOLDER + "html-output";
+export const DEFAULT_OUTPUT_FOLDER_STORAGE = DEFAULT_OUTPUT_FOLDER + "storage";
+export const DEFAULT_OUTPUT_FOLDER_LOCK = DEFAULT_OUTPUT_FOLDER + "lock";

@@ -46,11 +46,11 @@ const IGNORED_LINKS = [
 // returns index 0 as the filename and index 1 as the text content.
 export async function fetchAndSaveContent(targetUrl: string, link: string): Promise<string[]> {
   let overallContent = ["", ""];
-  console.info(`Processing Link: ${link}\n`)
+  console.log(`Processing Link: ${link}\n`)
   const baseDomain = getUrlDomain(targetUrl);
-  console.info(`Using base domain as: ${baseDomain}\n`);
+  console.log(`Using base domain as: ${baseDomain}\n`);
   if (IGNORED_LINKS.includes(link) || !link.includes(baseDomain)) {
-    console.info(`Link ignored: ${link}${getLineSeparator()}`)
+    console.log(`Link ignored: ${link}${getLineSeparator()}`)
     return overallContent;
   }
   try {
@@ -65,7 +65,7 @@ export async function fetchAndSaveContent(targetUrl: string, link: string): Prom
   } catch (error) {
     console.error(`Error fetching content from ${link}:`, (error as any)?.message);
   }
-  console.info(`Link processed: ${link}`)
-  console.info(getLineSeparator())
+  console.log(`Link processed: ${link}`)
+  console.log(getLineSeparator())
   return overallContent;
 }

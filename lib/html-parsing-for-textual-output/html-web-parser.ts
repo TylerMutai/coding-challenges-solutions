@@ -1,8 +1,14 @@
 import {load} from "cheerio";
 import puppeteer from "puppeteer";
-import {fetchAndSaveContent, getLineSeparator} from "./process-html-content";
+import {fetchAndSaveContent, getLineSeparator} from "./lib/process-html-content";
+import {
+  DEFAULT_OUTPUT_FOLDER,
+  DEFAULT_OUTPUT_FOLDER_HTML,
+  DEFAULT_OUTPUT_FOLDER_LOCK,
+  DEFAULT_OUTPUT_FOLDER_STORAGE
+} from "./lib/constants";
 
-const {Worker} = require("worker_threads");
+const {Worker} = require("node:worker_threads");
 const fs = require('fs')
 
 async function parseAndDownloadLinks(targetUrl: string, html: string, outputFolder: string) {
@@ -67,12 +73,35 @@ async function parseAndDownloadLinks(targetUrl: string, html: string, outputFold
     overallContent += hc[1]
   }
 
-  return new Promise((resolve, reject) => {
-    for (const hc of htmlContent) {
+  return new Promise<void>((resolve) => {
+    const runningWorkers: Array<number> = [];
+    for (let i = 0; i < htmlContent.length; i++) {
+      runningWorkers.push(i);
+    }
 
+    const handleErrorOrNot = (link: string, err: any) => {
+      console.info(`Worker for link: [${link}] running...`);
+      if (err) {
+        console.error("Worker error: ", err)
+      }
+      console.info(getLineSeparator())
+    }
+
+    const handleWorkerRunCompleted = (link: string, err: any) => {
+      runningWorkers.pop();
+      console.error(`Worker for link: [${link}] exited with status: `, err)
+      console.info("Remaining workers: ", runningWorkers.length)
+      console.info(getLineSeparator())
+
+      if (runningWorkers.length === 0) {
+        // last running worker. resolve this promise.
+        resolve();
+      }
+    }
+    for (const hc of htmlContent) {
       // run getting similarity index for each textual content in a separate thread to improve performance.
       const worker = new Worker(
-        __dirname + `/save-html-content-to-file.ts`,
+        __dirname + `/lib/save-html-content-to-file.js`,
         {
           workerData: {
             link: hc[0],
@@ -82,26 +111,29 @@ async function parseAndDownloadLinks(targetUrl: string, html: string, outputFold
           }
         }
       );
-      worker.on('message', resolve);
-      worker.on('error', reject);
+      worker.on('message', () => {
+        const link = hc[0];
+        handleErrorOrNot(link, "")
+      });
+      worker.on('error', (err: any) => {
+        const link = hc[0];
+        handleErrorOrNot(link, err)
+      });
       worker.on('exit', (code: number) => {
-        if (code !== 0)
-          reject(new Error(`Worker stopped with exit code ${code}`));
+        const link = hc[0];
+        handleWorkerRunCompleted(link, code)
       });
     }
   });
-
 }
 
-const DEFAULT_OUTPUT_FOLDER = "/tmp/html-web-parser/output";
 const ABORT_MISSION_COMMAND = "forfeit-mission";
 
-(async () => {
+const main = async () => {
   let targetUrl;
-  let outputFolder;
 
   process.argv.forEach(function (val, index) {
-    // by default, index o is the command being run, index 1 is the file being run.
+    // by default, index 0 is the command being run, index 1 is the file being run.
     // So passing arguments will start from index 2.
     if (index === 2) {
       if (val.includes("help")) {
@@ -111,15 +143,11 @@ const ABORT_MISSION_COMMAND = "forfeit-mission";
           "'node' in this help statement refers to any program/package that can parse " +
           `javascript or typescript files and execute them.${getLineSeparator()}` +
           `Commands ${getLineSeparator()}To print this help statement, type: 'node help'${getLineSeparator()}` +
-          `To specify targetUrl (required) type in: 'node https://google.com' where 'https://google.com' is targetUrl${getLineSeparator()}` +
-          `To specify output folder, type in: 'node [targetUrl] output/' where 'output/' is the output folder${getLineSeparator()}`);
+          `To specify targetUrl (required) type in: 'node https://google.com' where 'https://google.com' is targetUrl${getLineSeparator()}`);
         targetUrl = "forfeit-mission";
       } else {
         targetUrl = val;
       }
-    }
-    if (index === 3) {
-      outputFolder = val;
     }
   });
   if (!targetUrl) {
@@ -130,18 +158,23 @@ const ABORT_MISSION_COMMAND = "forfeit-mission";
     return;
   }
 
-  if (!outputFolder) {
-    console.info(`[outputFolder] not provided. will default to: ${DEFAULT_OUTPUT_FOLDER}. Note that this data will be deleted upon reboot.`)
-    outputFolder = DEFAULT_OUTPUT_FOLDER;
-  }
+  console.info(`Generated files will be saved to: ${DEFAULT_OUTPUT_FOLDER}. Note that this data will be deleted upon reboot.`)
 
-  if (!fs.existsSync(outputFolder)) {
-    fs.mkdirSync(outputFolder, {recursive: true});
+  if (!fs.existsSync(DEFAULT_OUTPUT_FOLDER_HTML)) {
+    fs.mkdirSync(DEFAULT_OUTPUT_FOLDER_HTML, {recursive: true});
+  }
+  if (!fs.existsSync(DEFAULT_OUTPUT_FOLDER_LOCK)) {
+    fs.mkdirSync(DEFAULT_OUTPUT_FOLDER_LOCK, {recursive: true});
+  }
+  if (!fs.existsSync(DEFAULT_OUTPUT_FOLDER_STORAGE)) {
+    fs.mkdirSync(DEFAULT_OUTPUT_FOLDER_STORAGE, {recursive: true});
   }
 
   const content = await fetchAndSaveContent(targetUrl, targetUrl);
   if (content) {
-    await parseAndDownloadLinks(targetUrl, content[1], outputFolder);
+    await parseAndDownloadLinks(targetUrl, content[1], DEFAULT_OUTPUT_FOLDER_HTML);
   }
-  console.log(`Finished processing '${targetUrl}'. Check the '${outputFolder}' folder.${getLineSeparator()}`);
-})();
+  console.log(`Finished processing '${targetUrl}'. Check the '${DEFAULT_OUTPUT_FOLDER_HTML}' folder.${getLineSeparator()}`);
+};
+
+main().then();

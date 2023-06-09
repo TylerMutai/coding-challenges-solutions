@@ -39,4 +39,4 @@ async function getSimilarityIndex(s1: string, s2: string) {
   return (longerLength - editDistance(longer, shorter)) / longerLength;
 }
 
-module.exports = {getSimilarityIndex}
+export default getSimilarityIndex
