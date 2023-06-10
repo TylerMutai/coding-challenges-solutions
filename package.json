@@ -12,5 +12,8 @@
   },
   "scripts": {
     "start": "ts-node main.ts"
+  },
+  "devDependencies": {
+    "typescript": "^5.1.3"
   }
 }
