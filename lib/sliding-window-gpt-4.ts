@@ -3,7 +3,7 @@ import * as readline from 'readline';
 import {Configuration, OpenAIApi} from "openai";
 
 const configuration = new Configuration({
-  apiKey: "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",
+  apiKey: "API KEY HERE",
 });
 
 const openai = new OpenAIApi(configuration);
@@ -68,6 +68,7 @@ async function processTextFile(filePath: string, chunkLength: number, overlapLen
     }
 
     fs.writeFileSync(outputFile, result, {flag: 'w'});
+    console.log("Chunk finished processing.")
   }
 
   if (buffer.length > 0) {
@@ -76,6 +77,7 @@ async function processTextFile(filePath: string, chunkLength: number, overlapLen
   }
 
   fs.writeFileSync(outputFile, result, {flag: 'w'});
+  console.log("Las cChunk finished processing.")
 }
 
 // Usage example
