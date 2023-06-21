@@ -20,7 +20,7 @@ async function gpt4Function(text: string): Promise<string> {
         },
         {
           "role": "user",
-          "content": "Given this text: \n" + text + " \n I'd like you to remove any punctuation and grammatical errors and also remove any forms of plagiarism"
+          "content":  text
         }
       ],
       max_tokens: 2048,
