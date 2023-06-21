@@ -76,6 +76,7 @@ async function processTextFile(filePath: string, chunkLength: number, overlapLen
   for await (const line of readInterface) {
     buffer += ' ' + line;
     bufferLength += buffer.length
+    result = ""
 
     while (buffer.length >= chunkLength) {
       let chunk = buffer.slice(0, chunkLength);
@@ -84,12 +85,11 @@ async function processTextFile(filePath: string, chunkLength: number, overlapLen
       let processedChunk = await getProcessedChunk(chunk, isFirstChunk ? 0 : overlapLength);
       result += processedChunk;
       isFirstChunk = false;
-
-
     }
 
-    fs.writeFileSync(outputFile, result, {flag: 'w'});
+    fs.writeFileSync(outputFile, result, {flag: 'a'});
     console.log(`Chunk finished processing. Current buffer length:${buffer.length}. Original buffer length: ${buffer.length} `)
+    console.log(`Text written to file: ${result}`)
   }
 
   if (buffer.length > 0) {
@@ -97,8 +97,9 @@ async function processTextFile(filePath: string, chunkLength: number, overlapLen
     result += lastProcessedChunk;
   }
 
-  fs.writeFileSync(outputFile, result, {flag: 'w'});
-  console.log("Las chunk finished processing.")
+  fs.writeFileSync(outputFile, result, {flag: 'a'});
+  console.log("Last chunk finished processing.")
+  console.log(`Text written to file: ${result}`)
 }
 
 // Usage example
