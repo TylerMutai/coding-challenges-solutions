@@ -32,8 +32,8 @@ public class Solution {
                 -1, -2, 10, -6, null, -3, -6
         };
         TreeNode root = Solution.getBinaryTreeFromArray(nums);
-        BTreePrinter.printNode(root);
         System.out.println(Solution.maxPathSum(root));
+        BTreePrinter.printNode(root);
     }
 
     private static TreeNode getBinaryTreeFromArray(Integer[] nums) {
@@ -64,10 +64,10 @@ public class Solution {
      */
     private static int maxPathSum(TreeNode root) {
         sums = new HashSet<>();
-        SumContainer maxSum = maxPathSumRecurse(root);
-        int max = maxSum.maxSum;
+        int max = maxPathSumRecurse(root);
+        System.out.println(sums);
         for (int sum : sums) {
-            if (max > sum) {
+            if (sum > max) {
                 max = sum;
             }
         }
@@ -78,19 +78,23 @@ public class Solution {
      * @param root the root node of the binary tree (basically the binary tree)
      * @return max path sum of the left/right tree
      */
-    private static SumContainer maxPathSumRecurse(TreeNode root) {
+    private static int maxPathSumRecurse(TreeNode root) {
         if (root == null) {
-            return new SumContainer(0, 0, 0);
+            return 0;
         }
 
-        SumContainer smLeft = maxPathSumRecurse(root.left);
-        SumContainer smRight = maxPathSumRecurse(root.right);
-        int totalSumLeftTree = root.data + smLeft.maxSum;
-        int totalSumRightTree = root.data + smRight.maxSum;
-        int totalSumLeftAndRightTree = totalSumRightTree + totalSumLeftTree - root.data;
+        int sumLeft = root.data + maxPathSumRecurse(root.left);
+        int sumRight = root.data + maxPathSumRecurse(root.right);
+        int totalSumLeftAndRightTree = sumLeft + sumRight - root.data;
         sums.add(totalSumLeftAndRightTree);
-        int max = Math.max(root.data, Math.max(totalSumLeftTree, totalSumRightTree));
-
-        return new SumContainer(totalSumLeftTree, totalSumRightTree, max);
+        sums.add(root.data);
+        int max = Math.max(root.data, Math.max(sumLeft, sumRight));
+        System.out.println("Node: " + root.data);
+        System.out.println("totalSumLeftTree: " + sumLeft);
+        System.out.println("totalSumRightTree: " + sumRight);
+        System.out.println("totalSumLeftAndRightTree: " + totalSumLeftAndRightTree);
+        System.out.println("max: " + max);
+        System.out.println("--------------------");
+        return max;
     }
 };
