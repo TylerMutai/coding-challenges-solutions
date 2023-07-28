@@ -1,18 +1,18 @@
 package BinaryTreeMaximumPathSum;
 
 public class TreeNode {
-    public final int data;
+    public final Integer val;
     public TreeNode left;
     public TreeNode right;
 
-    public TreeNode(int data, TreeNode left, TreeNode right) {
-        this.data = data;
+    public TreeNode(Integer val, TreeNode left, TreeNode right) {
+        this.val = val;
         this.left = left;
         this.right = right;
     }
 
-    public TreeNode(int data) {
-        this.data = data;
+    public TreeNode(Integer val) {
+        this.val = val;
         this.left = null;
         this.right = null;
     }
@@ -28,7 +28,7 @@ public class TreeNode {
         }
 
         StringBuilder sb = new StringBuilder();
-        sb.append(root.data);
+        sb.append(root.val);
 
         String pointerRight = "└──";
         String pointerLeft = (root.right != null) ? "├──" : "└──";
@@ -45,7 +45,7 @@ public class TreeNode {
             sb.append("\n");
             sb.append(padding);
             sb.append(pointer);
-            sb.append(node.data);
+            sb.append(node.val);
 
             StringBuilder paddingBuilder = new StringBuilder(padding);
             if (hasRightSibling) {

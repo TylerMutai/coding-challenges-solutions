@@ -29,7 +29,9 @@ public class Solution {
 
     public static void getMaxPathSum() {
         Integer[] nums = new Integer[]{
-                -1, -2, 10, -6, null, -3, -6
+//                -1, -2, 10, -6, null, -3, -6
+//                -1,-2,10,-6,null,-3,-6
+                -1, null, 9, -6, 3, null, null, null, -2
         };
         TreeNode root = Solution.getBinaryTreeFromArray(nums);
         System.out.println(Solution.maxPathSum(root));
@@ -45,7 +47,7 @@ public class Solution {
         TreeNode root = null;
         // Base case for recursion
         if (i < arr.length) {
-            if (arr[i] != null) {
+            if(arr[i] != null) {
                 root = new TreeNode(arr[i]);
 
                 // insert left child
@@ -65,7 +67,6 @@ public class Solution {
     private static int maxPathSum(TreeNode root) {
         sums = new HashSet<>();
         int max = maxPathSumRecurse(root);
-        System.out.println(sums);
         for (int sum : sums) {
             if (sum > max) {
                 max = sum;
@@ -83,18 +84,11 @@ public class Solution {
             return 0;
         }
 
-        int sumLeft = root.data + maxPathSumRecurse(root.left);
-        int sumRight = root.data + maxPathSumRecurse(root.right);
-        int totalSumLeftAndRightTree = sumLeft + sumRight - root.data;
+        int sumLeft = root.val + maxPathSumRecurse(root.left);
+        int sumRight = root.val + maxPathSumRecurse(root.right);
+        int totalSumLeftAndRightTree = sumLeft + sumRight - root.val;
         sums.add(totalSumLeftAndRightTree);
-        sums.add(root.data);
-        int max = Math.max(root.data, Math.max(sumLeft, sumRight));
-        System.out.println("Node: " + root.data);
-        System.out.println("totalSumLeftTree: " + sumLeft);
-        System.out.println("totalSumRightTree: " + sumRight);
-        System.out.println("totalSumLeftAndRightTree: " + totalSumLeftAndRightTree);
-        System.out.println("max: " + max);
-        System.out.println("--------------------");
-        return max;
+        sums.add(root.val);
+        return Math.max(root.val, Math.max(sumLeft, sumRight));
     }
 };
