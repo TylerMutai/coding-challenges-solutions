@@ -3,3 +3,5 @@ node_modules
 js-challenges-solutions.iml
 **/output
 .env
+out/
+js-coding-challenges-solutions/test.js
