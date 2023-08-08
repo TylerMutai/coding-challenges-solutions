@@ -13,48 +13,114 @@
  * @param wordList
  */
 function wordLadder(beginWord, endWord, wordList) {
-  const wordListSet = new Set(Array.from(wordList));
 
-  // insert the endWord to the set
-  wordListSet.add(endWord);
+  // Solution - Build an adjacency list which will represent each node and it's edges.
+  // Use Breadth-First algorithm to find the shortest path to [endWord]
+  // We also include the [beginWord] in our wordList set.
+  wordList = [beginWord, ...wordList]
+  const wordListSet = new Set(wordList);
 
-  let wordsToInvestigateQueue = new Set([beginWord])
-  let numberOfWords = 0;
+  if (!wordListSet.has(endWord)) {
+    return 0;
+  }
 
-  while (wordsToInvestigateQueue.size > 0) {
-    const arrOfWords = Array.from(wordsToInvestigateQueue);
-    let currentWord = arrOfWords.shift()
-    wordsToInvestigateQueue = new Set(arrOfWords.values());
-    numberOfWords++;
-    const chars = currentWord.split("");
-    for (let i = 0; i < chars.length; i++) {
-      // get all possible combinations of char
-      const words = allPossibleCombinationsOfChar(i, chars.join(""))
-      for (const word of words) {
-        if (wordListSet.has(word)) {
-          wordsToInvestigateQueue.add(word);
+  // let's build our adjacency list by using the word patterns. I.e:
+  // if hit, patterns are -> [*it], [h*t], [hi*] and so on.
+  const patternList = new Map();
+  for (const word of wordList) {
+    const patterns = getWordPatterns(word);
+
+    // inject each pattern to our [patternList]
+    for (const pattern of patterns) {
+      const existingList = patternList.get(pattern) || [];
+      existingList.push(word);
+      patternList.set(pattern, existingList);
+    }
+  }
+
+  // now let's loop through our pattern list and build nodes with their neighbours.
+  const adjacencyList = new Map();
+  for (const words of Array.from(patternList.values())) {
+    for (const word of words) {
+      const neighbours = adjacencyList.get(word) || new Set();
+      const otherWords = getOtherWords(word, words);
+      for (const w of otherWords) {
+        neighbours.add(w);
+      }
+      adjacencyList.set(word, neighbours);
+    }
+  }
+
+  console.log(adjacencyList)
+  // if all words don't have neighbours, then return 0.
+  let currentSize = 0;
+  for (const neighbours of adjacencyList.values()) {
+    if (neighbours.size > currentSize) {
+      currentSize = neighbours.size;
+    }
+  }
+  if (currentSize === 0) {
+    return currentSize;
+  }
+
+  // if [beginWord] and [endWord] have no neighbours, then it's not possible to convert this.
+  if ((adjacencyList.get(beginWord)).size === 0) {
+    return 0;
+  }
+
+  if ((adjacencyList.get(endWord)).size === 0) {
+    return 0;
+  }
+
+  const traversedWords = new Set([beginWord]);
+  const traversalQueue = [beginWord];
+  let currentDepth = 1;
+
+  while (traversalQueue.length > 0) {
+    // get [currentWord] neighbours, and store them
+    for (const word of traversalQueue) {
+      const currentWord = traversalQueue.shift();
+      if (currentWord === endWord) {
+        console.log("traversedWords", traversedWords)
+        return currentDepth;
+      }
+      const neighbours = Array.from(adjacencyList.get(currentWord) || new Set());
+      for (const n of neighbours) {
+        if (!traversedWords.has(n)) {
+          traversedWords.add(n);
+          traversalQueue.push(n);
         }
       }
     }
-    if (wordsToInvestigateQueue.has(endWord)) {
-      break;
+    currentDepth++;
+  }
+  console.log("traversedWords", traversedWords)
+  return currentDepth;
+}
+
+function getOtherWords(word, words) {
+  const otherWords = [];
+  for (const w of words) {
+    if (w !== word) {
+      otherWords.push(w);
     }
-    console.log("currentWord", currentWord);
-    console.log("numberOfWords", numberOfWords);
-    console.log("wordsToInvestigateQueue", wordsToInvestigateQueue);
   }
+  return otherWords;
 }
 
-function allPossibleCombinationsOfChar(index, chars) {
-  const alphabet = "a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z";
-  const alphabetArray = alphabet.split(",");
-
-  const words = new Set();
-  for (const alphabet of alphabetArray) {
-    const word = chars.substring(0, index) + alphabet + chars.substring(index + 1);
-    words.add(word)
+function getWordPatterns(word) {
+  const patterns = [];
+  for (let i = 0; i < word.length; i++) {
+    patterns.push(
+      word.substring(0, i) + "*" + word.substring(i + 1)
+    );
   }
-  return Array.from(words.values());
+  return patterns;
 }
 
-wordLadder("hit", "cog", ["hot", "dot", "dog", "lot", "log", "cog"])
+// console.log("Answer: ", wordLadder("hit", "cog", ["hot", "dot", "dog", "lot", "log", "cog"]))
+// console.log("Answer: ", wordLadder("hot", "dog", ["hot", "dog",]))
+// console.log("Answer: ", wordLadder("hot", "dog", ["hot", "dog", "dot"]))
+// console.log("Answer: ", wordLadder("red", "tax", ["ted", "tex", "red", "tax", "tad", "den", "rex", "pee"]))
+// console.log("Answer: ", wordLadder("talk", "tail", ["talk", "tons", "fall", "tail", "gale", "hall", "negs"]))
+console.log("Answer: ", wordLadder("hit", "cog", ["hot", "dot", "tog", "cog"]))
