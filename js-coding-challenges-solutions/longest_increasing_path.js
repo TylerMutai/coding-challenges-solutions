@@ -48,4 +48,13 @@ function longestIncreasingPath(matrix) {
   return longestPath;
 }
 
+console.log("Longest Path: ", longestIncreasingPath(
+  [
+    [1, 2, 3, 4],
+    [2, 2, 3, 4],
+    [3, 2, 3, 4],
+    [4, 5, 6, 7]
+  ]
+));
+
 console.log("Longest Path: ", longestIncreasingPath([[9, 9, 4], [6, 6, 8], [2, 1, 1]]));
