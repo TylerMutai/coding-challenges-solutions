@@ -40,4 +40,34 @@ function longestConsecutive(nums) {
   return longest;
 }
 
-console.log(longestConsecutive([1, 2, 0, 1]));
+function _longestConsecutive(nums) {
+  const numsSet = new Set(nums);
+
+
+  const allSequences = [];
+  for (const num of nums) {
+    let sequences = [];
+    if (!numsSet.has(num - 1)) {
+      sequences.push(num);
+      let current = num + 1;
+      while (numsSet.has(current)) {
+        sequences.push(current);
+        current++;
+      }
+    }
+    if (sequences.length > 0) {
+      allSequences.push(sequences);
+    }
+  }
+
+  let longest = 0;
+  for (const numbers of allSequences) {
+    if (numbers.length > longest) {
+      longest = numbers.length;
+    }
+  }
+  return longest;
+}
+
+console.log(longestConsecutive([0, 3, 7, 2, 5, 8, 4, 6, 0, 1]));
+console.log(_longestConsecutive([0, 3, 7, 2, 5, 8, 4, 6, 0, 1]));
