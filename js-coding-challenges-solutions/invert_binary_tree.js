@@ -1,3 +1,8 @@
+/**
+ *
+ * Given the root of a binary tree, invert the tree, and return its root.
+ */
+
 function TreeNode(val, left, right) {
   this.val = (val === undefined ? 0 : val)
   this.left = (left === undefined ? null : left)
