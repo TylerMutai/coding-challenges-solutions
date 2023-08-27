@@ -13,14 +13,35 @@ function TreeNode(val, left, right) {
   this.right = (right === undefined ? null : right)
 }
 
+let max = [];
+
+function recurse(root) {
+  if (root == null) {
+    return -1;
+  }
+
+  const depthLeft = 1 + recurse(root.left);
+  const depthRight = 1 + recurse(root.right);
+  max = Math.max(max, depthLeft + depthRight);
+  console.log("Node:::: ", root.val);
+  console.log("depthLeft", depthLeft);
+  console.log("depthRight", depthRight);
+  console.log("max", max);
+  console.log("------------------------");
+
+  return Math.max(depthLeft, depthRight);
+}
+
 /**
  * @param {TreeNode} root
  * @return {number}
  */
 function diameterOfBinaryTree(root) {
-  if (root == null) {
-    return 0;
-  }
-
-
+  max = 0;
+  recurse(root);
+  console.log("Node:::: ", root.val);
+  console.log("depth", max);
+  console.log("max", max);
+  console.log("------------------------");
+  return max;
 }
