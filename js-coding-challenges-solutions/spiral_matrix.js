@@ -65,25 +65,11 @@ function spiralMatrix(matrix) {
           }
         }
       }
-
-      console.log("l", l);
-      console.log("r", r);
-      console.log("top", top);
-      console.log("bottom", bottom);
-      console.log();
-
-      console.log("top", topSpiral);
-      console.log("right", rightSpiral);
-      console.log("bottom", bottomSpiral);
-      console.log("left", leftSpiral);
-      console.log("traversed", traversedIndices);
-      console.log("-------------------------------");
       spiral.push(...[...topSpiral, ...rightSpiral, ...bottomSpiral, ...leftSpiral]);
       l++;
       r--;
       top++;
       bottom--;
-      console.log("Spiral", spiral)
     }
   } catch
     (e) {
@@ -91,6 +77,10 @@ function spiralMatrix(matrix) {
     console.log(e);
   }
   return spiral;
+}
+
+function _spiralMatrix(matrix){
+
 }
 
 console.log(spiralMatrix([[2, 5], [8, 4], [0, -1]]));
