@@ -32,7 +32,7 @@ function numIslands(grid) {
       const directions = [[0, 1], [1, 0], [0, -1], [-1, 0]]
       for (const dir of directions) {
         const [r, c] = [row + dir[0], col + dir[1]];
-        if (r < rows && c < cols && grid[row][col] === "1" && !visits.has(getIdentifier(r, c))) {
+        if (r > 0 && c > 0 && r < rows && c < cols && grid[r][c] === "1" && !visits.has(getIdentifier(r, c))) {
           q.push(getIdentifier(r, c));
           visits.add(getIdentifier(r, c));
         }
