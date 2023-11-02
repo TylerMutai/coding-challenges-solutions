@@ -10,19 +10,6 @@
  * You must write an algorithm that runs in O(log n) time.
  */
 function findMin(nums) {
-
-
-}
-
-function findNumRecursive(nums) {
-  if (nums.length === 1) return nums[0];
-
-  const midpoint = Math.floor(nums.length / 2)
-
-
-}
-
-function findNumIterative(nums) {
   let l = 0, r = nums.length - 1;
 
   let minimumValue = null;
@@ -61,4 +48,4 @@ function findNumIterative(nums) {
   return minimumValue;
 }
 
-console.log(findNumIterative([1, 2]));
+console.log(findMin([1, 2]));
