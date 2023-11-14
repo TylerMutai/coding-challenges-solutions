@@ -1,6 +1,7 @@
 /**
  * A representation of a dictionary in form of a trie.
  */
+const wordsDictionary = require("./words_reader");
 
 function TrieEntry(word) {
   this.word = word;
@@ -96,16 +97,67 @@ function TrieDictionary() {
 }
 
 function injectWordsToTrie() {
-  const words = ["apple", "art", "ant", "and", "sat", "sam", "sand"];
+  const now = new Date();
+  console.log(`Dictionary population (${wordsDictionary.length} words) timestamp start: `, now.getTime());
   const trieDict = new TrieDictionary();
-  for (const word of words) {
+  for (const word of wordsDictionary) {
     trieDict.insertWord(word);
   }
-  trieDict.printDictionary();
+  const now2 = new Date();
+  console.log("Timestamp after population: ", now2.getTime());
+  console.log("Number of seconds elapsed: ", (now2.getTime() - now.getTime()) / 1000);
+  console.log("------------------------------------------------------------")
 
-  console.log("Searching Section: ------------");
-  console.log(trieDict.searchWord("sand"));
-  console.log(trieDict.searchWord("arf"));
+  const wordsToSearch = ["a", "aa", "aaa", "aaaa", "aaacn", "aaah", "aaai", "aaas", "aab", "zzzz", "rewriting",
+    "rewritten", "rewrote", "rex", "rexburg", "roxburgh",
+    "roxburghshire", "roxbury", "roxen", "roxette", "roxie", "roxio", "tilapia", "tilburg", "tilbury",
+    "tilda", "tilde", "tilden", "tile", "tiled", "tiles", "tilghman", "tilia", "tiling", "till", "tillage",
+    "tillamook", "tilled", "tiller", "tillers", "tilley", "tillie", "tilling", "tillis", "tillman", "tillotson",
+    "tillsonburg", "tilly", "tilman", "tilson", "tilt", "tilted", "tilting", "caidoz", "Zionism",
+    "msinoiZ", "Zionism1", "1msinoiZ", "Zip", "piZ", "Zip1", "1piZ", "Zipping", "gnippiZ", "Zipping1", "1gnippiZ",
+    "Zircon", "nocriZ", "Zircon1", "1nocriZ", "Zirconiu", "uinocriZ", "Zloty", "ytolZ", "Zodiac", "caidoZ", "1gnippiz",
+    "zircon", "nocriz", "zircon1", "1nocriz", "zirconiu", "uinocriz", "zloty", "ytolz", "zodiac", "caidoz",
+    "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff",
+    "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff",
+    "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff",
+    "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff",
+    "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff",
+    "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff",
+    "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff",
+    "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff", "caidozzzzdff"
+  ];
+
+  // duplicate the [wordsToSearch] array n*n times.
+  for (let i = 0; i < 5; i++) {
+    wordsToSearch.push(...wordsToSearch);
+  }
+
+  console.log("Length (n) of words to search: ", wordsToSearch.length);
+  console.log("------------------------------------------------------------")
+
+  const searchLinearNow = new Date();
+  console.log("Linear Searching timestamp start: ", searchLinearNow.getTime());
+  for (const word of wordsToSearch) {
+    let match = false;
+    for (const w of wordsDictionary) {
+      if (w === word) {
+        match = true;
+        break;
+      }
+    }
+  }
+  console.log("Linear Searching total seconds elapsed: ", (new Date().getTime() - searchLinearNow.getTime()) / 1000);
+  console.log("-----------------------------------------------------------");
+  console.log("-----------------------------------------------------------");
+
+  const searchDictionaryNow = new Date();
+  console.log("Dictionary (Trie) Searching timestamp start: ", searchDictionaryNow.getTime());
+  for (const word of wordsToSearch) {
+    trieDict.searchWord(word);
+  }
+  console.log("Dictionary (Trie) Searching total seconds elapsed: ", (new Date().getTime() - searchDictionaryNow.getTime()) / 1000);
+  console.log("-----------------------------------------------------------");
+  console.log("-----------------------------------------------------------");
 }
 
 injectWordsToTrie();

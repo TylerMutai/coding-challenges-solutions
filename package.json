@@ -14,6 +14,6 @@
     "start": "ts-node main.ts"
   },
   "devDependencies": {
-    "typescript": "^5.1.3"
+    "typescript": "^5.2.2"
   }
 }

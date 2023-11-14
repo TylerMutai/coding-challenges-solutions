@@ -21,59 +21,56 @@ function readFile(filePath: string): string {
 
 async function getGPTResponse(text: string): Promise<string> {
   let resultString = "";
-  const response = await openai.createChatCompletion(
-    {
-      model: "gpt-4",
-      messages: [
-        {
-          "role": "system",
-          "content": text
-        }
-      ],
-      max_tokens: 4096,
-      temperature: 1,
-      top_p: 1,
-      frequency_penalty: 0,
-      presence_penalty: 0,
-    })
-  console.log("RESPONSE: ", response);
-  if (response.data?.choices?.length > 0) {
-    const gptRes = response.data.choices[0].message?.content;
-    if (gptRes) {
-      resultString = gptRes;
+  try {
+    const response = await openai.createChatCompletion(
+      {
+        model: "gpt-4",
+        messages: [
+          {
+            "role": "user",
+            "content": text
+          }
+        ],
+        max_tokens: 4096,
+        temperature: 1,
+        top_p: 1,
+        frequency_penalty: 0,
+        presence_penalty: 0,
+      })
+    console.log("RESPONSE STATUS: ", response.status);
+    if (response.data?.choices?.length > 0) {
+      const gptRes = response.data.choices[0].message?.content;
+      if (gptRes) {
+        resultString = gptRes;
+      }
     }
+  } catch (e) {
+    console.log("ERROR: ", e.message);
   }
+  console.log("#############-------------------################");
   return resultString;
 }
 
-async function processGPT(prompt: string, index: number): Promise<void> {
+async function processGPT(prompt: string): Promise<void> {
   const res = await getGPTResponse(prompt);
   console.log("GPT-4 RESPONSE: ", res);
   console.log("##############################");
   console.log("\n");
-  writePromptResponse(`${responseFile}_${index}.md`, res);
+  writePromptResponse(`${responseFile}_answer.md`, res);
 }
 
 async function gpt4Function(): Promise<void> {
   const prompt = readFile(promptFile);
   const css = readFile(cssFile);
 
-  // Split the CSS into individual blocks
-  const cssBlocks = css.split("\n\n\n\n");
-  // Iterate over blocks
-  for (let i = 0; i < cssBlocks.length; i++) {
-    const block = cssBlocks[i];
-    if (block.length) {
-      // Buffer is flushed when next block would breach the limit
-      const promptWithCSS = prompt.replace(/#-#-#/gi, block);
+  // Buffer is flushed when next block would breach the limit
+  const promptWithCSS = prompt.replace(/#-#-#/gi, css);
 
-      console.log("CURRENT BLOCK: ", block);
-      console.log("##############################");
-      console.log("PROMPT WITH CSS: ", promptWithCSS);
-      console.log("\n");
-      processGPT(promptWithCSS, i).then();
-    }
-  }
+  console.log("CURRENT BLOCK: ", css);
+  console.log("##############################");
+  console.log("PROMPT WITH CSS: ", promptWithCSS);
+  console.log("\n");
+  processGPT(promptWithCSS).then();
 }
 
 gpt4Function();

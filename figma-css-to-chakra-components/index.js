@@ -38,44 +38,103 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var openai_1 = require("openai");
 var fs = require("fs");
-var promptFile = "prompt.md";
-var cssFile = "prompt.txt";
-var responseFile = "response.md";
+var promptFile = "./prompt.md";
+var cssFile = "./code.css";
+var responseFile = "./response";
 var configuration = new openai_1.Configuration({
     apiKey: process.env.API_KEY,
 });
 var openai = new openai_1.OpenAIApi(configuration);
-function writePromptResponse(result) {
-    fs.writeFileSync(responseFile, result, { flag: 'a' });
+function writePromptResponse(filePath, result) {
+    fs.writeFileSync(filePath, result, { flag: 'a' });
 }
 function readFile(filePath) {
     return fs.readFileSync(filePath, 'utf-8');
 }
-function gpt4Function(text) {
+function getGPTResponse(text) {
+    var _a, _b, _c;
     return __awaiter(this, void 0, void 0, function () {
-        var prompt, css, resultString, cssPromptTokenLength, maxTokenLength, loops, promptWithCSS, i, startIndex, endIndex, substring;
+        var resultString, response, gptRes, e_1;
+        return __generator(this, function (_d) {
+            switch (_d.label) {
+                case 0:
+                    resultString = "";
+                    _d.label = 1;
+                case 1:
+                    _d.trys.push([1, 3, , 4]);
+                    return [4 /*yield*/, openai.createChatCompletion({
+                            model: "gpt-4",
+                            messages: [
+                                {
+                                    "role": "system",
+                                    "content": text
+                                }
+                            ],
+                            max_tokens: 8192,
+                            temperature: 1,
+                            top_p: 1,
+                            frequency_penalty: 0,
+                            presence_penalty: 0,
+                        })];
+                case 2:
+                    response = _d.sent();
+                    console.log("RESPONSE STATUS: ", response.status);
+                    if (((_b = (_a = response.data) === null || _a === void 0 ? void 0 : _a.choices) === null || _b === void 0 ? void 0 : _b.length) > 0) {
+                        gptRes = (_c = response.data.choices[0].message) === null || _c === void 0 ? void 0 : _c.content;
+                        if (gptRes) {
+                            resultString = gptRes;
+                        }
+                    }
+                    return [3 /*break*/, 4];
+                case 3:
+                    e_1 = _d.sent();
+                    console.log("ERROR: ", e_1);
+                    return [3 /*break*/, 4];
+                case 4:
+                    console.log("#############-------------------################");
+                    return [2 /*return*/, resultString];
+            }
+        });
+    });
+}
+function processGPT(prompt, index) {
+    return __awaiter(this, void 0, void 0, function () {
+        var res;
         return __generator(this, function (_a) {
-            console.log("promptFile: ", promptFile);
-            console.log("cssFile: ", cssFile);
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, getGPTResponse(prompt)];
+                case 1:
+                    res = _a.sent();
+                    console.log("GPT-4 RESPONSE: ", res);
+                    console.log("##############################");
+                    console.log("\n");
+                    writePromptResponse("".concat(responseFile, "_").concat(index, ".md"), res);
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+function gpt4Function() {
+    return __awaiter(this, void 0, void 0, function () {
+        var prompt, css, cssBlocks, i, block, promptWithCSS;
+        return __generator(this, function (_a) {
             prompt = readFile(promptFile);
             css = readFile(cssFile);
-            console.log("PROMPT: ", prompt);
-            console.log("CSS: ", css);
-            resultString = "";
-            cssPromptTokenLength = css.length / 4;
-            maxTokenLength = 4096;
-            loops = Math.ceil(cssPromptTokenLength / maxTokenLength);
-            console.log("LOOPS: ", loops);
-            promptWithCSS = prompt.replace(/#-#-#/gi, css);
-            for (i = 0; i < loops; i++) {
-                startIndex = i * maxTokenLength;
-                endIndex = startIndex + maxTokenLength + 1;
-                substring = css.substring(startIndex, endIndex);
-                console.log("CURRENT SUBSTRING: ", substring);
-                console.log("\n");
+            cssBlocks = css.split("\n\n\n\n");
+            // Iterate over blocks
+            for (i = 0; i < cssBlocks.length; i++) {
+                block = cssBlocks[i];
+                if (block.length) {
+                    promptWithCSS = prompt.replace(/#-#-#/gi, block);
+                    console.log("CURRENT BLOCK: ", block);
+                    console.log("##############################");
+                    console.log("PROMPT WITH CSS: ", promptWithCSS);
+                    console.log("\n");
+                    processGPT(promptWithCSS, i).then();
+                }
             }
             return [2 /*return*/];
         });
     });
 }
-gpt4Function("yellow");
+gpt4Function();

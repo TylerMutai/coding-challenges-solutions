@@ -38,4 +38,8 @@ position: {
 Also, create components according to the attached comments above the CSS properties. Create the styles in a
 separate file from the component itself, and import them into the components. CODE ONLY. 
 I REPEAT. DON'T EXPLAIN ANYTHING. JUST WRITE CODE.
+ALSO SHOW WHERE FILES ARE IMPORTED IF THERE'S COMPONENT RE-USE.
+Also, above every style definition, include JS docs. i.e if it's styles for chakra's 'Flex' include 'FlexProps' in the 
+js doc.
+Pixels should be whole numbers.
 If components appear similar, apply re-using of styles and/or components. Make your code clean, modular and non-repetitive.
