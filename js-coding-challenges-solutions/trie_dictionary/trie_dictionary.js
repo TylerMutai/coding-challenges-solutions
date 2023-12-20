@@ -3,7 +3,7 @@
  */
 const wordsDictionary = require("./words_reader");
 
-function TrieEntry(word) {
+export function TrieEntry(word) {
   this.word = word;
   const words = [];
   for (let i = 0; i < 26; i++) {
@@ -12,7 +12,7 @@ function TrieEntry(word) {
   this.words = words;
 }
 
-function TrieDictionary() {
+export function TrieDictionary() {
   const letterToIndexMapping = {
     "a": 1,
     "b": 2,
