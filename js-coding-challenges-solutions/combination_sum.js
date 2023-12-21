@@ -7,39 +7,30 @@
  * frequency
  *  of at least one of the chosen numbers is different.
  *
- * The test cases are generated such that the number of unique combinations that sum up to target is less than 150 combinations for the given input.
+ * The test cases are generated such that the number of unique combinations that sum up to target is less than 150
+ * combinations for the given input.
  */
 
 function combinationSum(candidates, target) {
+  const result = [];
   candidates.sort((a, b) => a - b);
-  console.log("SORTED CANDIDATES: ", candidates);
-  const factors = [];
-  const candidatesSet = new Set();
-  for (const c of candidates) {
-    candidatesSet.add(c);
-  }
 
-  console.log("SORTED CANDIDATES SET: ", candidatesSet);
-  const leastNumber = candidates[0];
-  if (candidatesSet.has(target)) {
-    factors.push(target);
-  }
-  for (const c of candidates) {
-    let difference = target - c;
-    while (difference >= leastNumber) {
-      if (candidatesSet.has(c)) {
-        factors.push(c);
-      }
-      difference = difference - c;
+  const backtrack = (cand, start, target, list) => {
+    if (target < 0) {
+      return;
     }
-  }
-  console.log("FACTORS: ", factors);
+    if (target === 0) {
+      result.push([...list]);
+    }
+    for (let i = start; i < cand.length; i++) {
+      list.push(cand[i]);
+      backtrack(cand, i, target - cand[i], list);
+      list.pop();
+    }
+  };
 
-  const factorsLevel2 = [];
-  for (const f of factors) {
-    factorsLevel2.push(target - f);
-  }
-  console.log("FACTORS LEVEL 2: ", factorsLevel2);
+  backtrack(candidates, 0, target, [], result);
+  return result;
 }
 
-combinationSum([2, 3, 6, 7], 7);
+console.log(combinationSum([2, 3, 5], 8));
