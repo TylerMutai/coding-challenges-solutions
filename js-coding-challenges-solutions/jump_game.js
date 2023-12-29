@@ -6,29 +6,28 @@
  */
 
 const canJump = (nums) => {
-  let currentStep = nums[0];
-  if (currentStep === 0) {
-    return false;
-  }
 
-  for (let i=0;i<nums.length;i++) {
-    // get all possible jumps.
-    let _jumps =  nums[i];
-    const possibilities = [];
-    while (_jumps > 0){
-      possibilities.push(_jumps);
-      _jumps--;
+  const _recurseSteps = (index) => {
+    if (index === nums.length - 1) {
+      return true;
     }
-    for (const p of possibilities){
-      for (i = p + i; i < nums.length;i++){
-        const num = nums[i];
-        if(num === 0 || i >= nums.length){
-          return  false;
-        }
-        let _jumps = nums[i];
+    if (index >= nums.length) {
+      return false;
+    }
+
+    let jumps = nums[index];
+    while (jumps >= 1) {
+      const res = _recurseSteps(index + jumps);
+      if (res) {
+        return res;
       }
+      jumps--;
     }
-  }
 
+    return false;
+  };
 
+  return _recurseSteps(0);
 };
+
+console.log(canJump([3, 2, 1, 0, 4]));
