@@ -7,6 +7,9 @@
 
 const canJump = (nums) => {
 
+  // store traversed indices to avoid repeated work.
+  const traversedIndices = new Set();
+
   const _recurseSteps = (index) => {
     if (index === nums.length - 1) {
       return true;
@@ -14,6 +17,11 @@ const canJump = (nums) => {
     if (index >= nums.length) {
       return false;
     }
+    if (traversedIndices.has(index)) {
+      return false;
+    }
+
+    traversedIndices.add(index);
 
     let jumps = nums[index];
     while (jumps >= 1) {
@@ -30,4 +38,4 @@ const canJump = (nums) => {
   return _recurseSteps(0);
 };
 
-console.log(canJump([3, 2, 1, 0, 4]));
+console.log(canJump([2, 3, 1, 1, 4]));
