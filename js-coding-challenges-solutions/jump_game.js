@@ -40,7 +40,7 @@ const canJump = (nums) => {
   return _recurseSteps(0);
 };
 
-// Greedy Solution
+// Greedy Solution, more complicated loop, but faster I assume since while loops are faster?
 const _canJump = (nums) => {
   let currGoal = nums.length - 1, nextPossibleIndex = currGoal - 1;
 
@@ -59,7 +59,7 @@ const _canJump = (nums) => {
   return currGoal === 0;
 };
 
-// Greedy Solution better loop
+// Greedy Solution better loop, but slower since I assume for loops are slower than while loops?
 const __canJump = (nums) => {
   let goal = nums.length - 1;
   for (let i = nums.length; i >= 0; i--) {
