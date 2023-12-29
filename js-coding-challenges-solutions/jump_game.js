@@ -59,4 +59,16 @@ const _canJump = (nums) => {
   return currGoal === 0;
 };
 
-console.log(_canJump([3, 2, 1, 0, 4]));
+// Greedy Solution better loop
+const __canJump = (nums) => {
+  let goal = nums.length - 1;
+  for (let i = nums.length; i >= 0; i--) {
+    if (nums[i] + i >= goal) {
+      goal = i;
+    }
+  }
+
+  return goal === 0;
+};
+
+console.log(__canJump([3, 2, 1, 0, 4]));
