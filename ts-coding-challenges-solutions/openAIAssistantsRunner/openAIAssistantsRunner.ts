@@ -6,11 +6,6 @@ const extensionsToProcess = new Set<string>([
   ".ts",
 ]);
 
-const assistants = {
-  digifarmCodeGenerationAIApolloServerTests: process.env.DIGIFARM_COGE_GENERATION_AI_APOLLO_SERVER_TESTS,
-  digifarmCodeGenerationAIReactComponentsTests: process.env.DIGIFARM_COGE_GENERATION_REACT_COMPONENT_TESTS,
-};
-
 const openAiTool = new OpenAI();
 
 function sleep(time: number) {
@@ -19,7 +14,7 @@ function sleep(time: number) {
   });
 }
 
-async function processFilesRecursively(source: string, target: string) {
+async function processFilesRecursively(source: string, target: string, assistantId: string) {
   const files = fs.readdirSync(source);
 
   for (const file of files) {
@@ -35,7 +30,7 @@ async function processFilesRecursively(source: string, target: string) {
         console.log("Creating directory now at: ", targetPath);
         fs.mkdirSync(targetPath);
       }
-      await processFilesRecursively(sourcePath, targetPath);
+      await processFilesRecursively(sourcePath, targetPath, assistantId);
     } else {
       console.log("Handling file: ", sourcePath);
       if (extensionsToProcess.has(extension)) {
@@ -48,7 +43,7 @@ async function processFilesRecursively(source: string, target: string) {
           messages: [
             {
               role: "user",
-              content: "```typescript\n" + content + "\n```",
+              content: "```typescript" + extension.includes("x") ? " jsx\n" : "\n" + content + "\n```",
             },
           ],
         });
@@ -56,7 +51,7 @@ async function processFilesRecursively(source: string, target: string) {
         console.log("Created thread with id: ", aiThread.id);
         console.log("Executing run....");
         const aiRun = await openAiTool.beta.threads.runs.create(aiThread.id, {
-          assistant_id: assistants.digifarmCodeGenerationAIApolloServerTests,
+          assistant_id: assistantId,
         });
 
         while (true) {
@@ -98,8 +93,9 @@ async function processFilesRecursively(source: string, target: string) {
 }
 
 function main() {
-  const sourceDirectory = process.argv[2];
-  const targetDirectory = process.argv[3];
+  const assistantId = process.argv[2];
+  const sourceDirectory = process.argv[3];
+  const targetDirectory = process.argv[4];
 
   if (!fs.existsSync(sourceDirectory)) {
     console.error(`Source directory: ${sourceDirectory} does not exist.`);
@@ -111,7 +107,7 @@ function main() {
     fs.mkdirSync(targetDirectory);
   }
 
-  processFilesRecursively(sourceDirectory, targetDirectory).then(() => {
+  processFilesRecursively(sourceDirectory, targetDirectory, assistantId).then(() => {
     console.log("Exiting.......");
   });
 }
