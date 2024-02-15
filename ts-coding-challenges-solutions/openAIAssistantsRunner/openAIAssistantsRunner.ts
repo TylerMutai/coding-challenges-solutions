@@ -4,6 +4,7 @@ import {OpenAI} from "openai";
 
 const extensionsToProcess = new Set<string>([
   ".ts",
+  ".tsx"
 ]);
 
 const openAiTool = new OpenAI();
