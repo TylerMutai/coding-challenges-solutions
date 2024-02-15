@@ -7,7 +7,8 @@ const extensionsToProcess = new Set<string>([
 ]);
 
 const assistants = {
-  digifarmCodeGenerationAIApolloServerTests: "asst_SZ2onEWh0X5oycXDQ6uXlgde",
+  digifarmCodeGenerationAIApolloServerTests: process.env.DIGIFARM_COGE_GENERATION_AI_APOLLO_SERVER_TESTS,
+  digifarmCodeGenerationAIReactComponentsTests: process.env.DIGIFARM_COGE_GENERATION_REACT_COMPONENT_TESTS,
 };
 
 const openAiTool = new OpenAI();
