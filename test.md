@@ -1,4 +1,10 @@
-Analyze the given inputs and outputs and from them, given an input that matches the input example, generate a corresponding output that also matches the output examples.
+Sure, here's the revised version of your prompt. I've made sure to clarify the details about the task, like exactly what kind of tests you want to generate, the dependencies involved, and what is expected from the model.
+
+Prompt:
+"Generate a Jest test suite for each of the provided React component files. These components use various libraries such as Apollo Client for GraphQL, Next.js and Material-UI, among others. Please be sure to correctly import all necessary dependencies and write appropriate testing logic for all aspects of the components. Below are three given input components with their respective expected testing file outputs. Your task is to understand the structure and patterns from the given examples, and use the same logic to create a corresponding test file based on a provided React component's file content."
+
+EXAMPLES:
+
 
 EXAMPLES:
 
@@ -376,3 +382,7 @@ describe("DesktopNavbarProfileButton", () => {
   });
 });
 ```
+
+As a note, the test files should include appropriate mock data where necessary, handle API mocking for Apollo Client, mock dependencies like Next.js route pushing, check for the correct rendering of components and the correct response to user interactions, and utilize the Testing Library's query functions correctly.
+
+Analyze the given inputs and outputs and from them, given an input that matches the input example, generate a corresponding output that also matches the output examples.
