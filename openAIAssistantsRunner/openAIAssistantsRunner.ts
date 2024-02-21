@@ -4,7 +4,7 @@ import {OpenAI} from "openai";
 
 const extensionsToProcess = new Set<string>([
   ".ts",
-  ".tsx"
+  ".tsx",
 ]);
 
 const openAiTool = new OpenAI();
@@ -37,14 +37,15 @@ async function processFilesRecursively(source: string, target: string, assistant
       if (extensionsToProcess.has(extension)) {
 
         // if file has extension that is in  [extensionsToProcess], read the whole file.
-        const content = fs.readFileSync(sourcePath, 'utf8');
+        const content = fs.readFileSync(sourcePath, {encoding: 'utf8'});
 
         // make request to our apollo server assistant model to generate tests.
+        const __message = "```typescript" + (extension.includes("x") ? " jsx\n" : "\n") + content + "\n```";
         const aiThread = await openAiTool.beta.threads.create({
           messages: [
             {
               role: "user",
-              content: "```typescript" + extension.includes("x") ? " jsx\n" : "\n" + content + "\n```",
+              content: __message,
             },
           ],
         });

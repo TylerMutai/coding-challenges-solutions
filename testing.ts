@@ -1,51 +1,43 @@
-import {end} from "cheerio/lib/api/traversing";
+import * as fs from 'fs';
+import * as path from 'path';
 
-function sleep(){
-  return new Promise(resolve=>{
-    setTimeout(resolve,200);
-  })
+async function processFilesRecursively(source: string) {
+  const files = fs.readdirSync(source);
+
+  let count = 1;
+  for (const file of files) {
+    const sourcePath = path.join(source, file);
+    if (fs.statSync(sourcePath).isDirectory()) {
+       await processFilesRecursively(sourcePath);
+       return;
+    }
+
+    console.log("Source destination is defined as: ", sourcePath);
+    console.log("Handling file: ", sourcePath);
+
+    // if file has extension that is in  [extensionsToProcess], read the whole file.
+    const content = fs.readFileSync(sourcePath, 'utf8');
+
+    fs.writeFileSync("./content.txt", `// ${count}. ${file}: \n` + content + "\n```\n\n", {
+      flag: "a+",
+    });
+
+    console.log("File processing complete.");
+    count++;
+  }
 }
 
-async function makeIterator(
-  filePath: string,
-  start: number,
-  end: number,
-  byteLengthToRead: number,
-  ceiling: number
-) {
-  console.log("START BEFORE: ",start);
-  console.log("END BEFORE: ",end);
-  console.log("BYTE LENGTH TO READ BEFORE: ",byteLengthToRead);
-  console.log("CEILING BEFORE: ",ceiling);
-  console.log("###########: ");
-  if (start < ceiling || start >= end) {
-    // we have read the whole file. return.
+function main() {
+  const sourceDirectory = process.argv[2];
+
+  if (!fs.existsSync(sourceDirectory)) {
+    console.error(`Source directory: ${sourceDirectory} does not exist.`);
     return;
   }
-   await sleep();
-  // move [byteLengthToRead] bytes behind.
-  let _start = start;
-  const _end = _start;
-  _start = _start - byteLengthToRead;
 
-  // if moving [byteLengthToRead] bytes behind becomes less than [ceiling], then move our
-  // [_start] to [ceiling].
-  if (_start < ceiling) {
-    _start = ceiling;
-  }
-  console.log("START AFTER: ",_start);
-  console.log("END AFTER: ",_end);
-  console.log("BYTE LENGTH TO READ: ",byteLengthToRead);
-  console.log("CEILING: ",ceiling);
-  console.log("###########: ");
-
-  await makeIterator(filePath, _start, _end, byteLengthToRead, ceiling);
+  processFilesRecursively(sourceDirectory).then(() => {
+    console.log("Exiting.......");
+  });
 }
-const _byteLengthToRead = 13;
-const _ceiling = 1500;
-const _maxSize = 2000;
-let _end = _maxSize;
-let _start = _end - _byteLengthToRead;
 
-
-makeIterator("test",_start,_end,_byteLengthToRead,_ceiling);
+main();
