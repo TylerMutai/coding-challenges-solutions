@@ -1,43 +1,53 @@
-import * as fs from 'fs';
-import * as path from 'path';
-
-async function processFilesRecursively(source: string) {
-  const files = fs.readdirSync(source);
-
-  let count = 1;
-  for (const file of files) {
-    const sourcePath = path.join(source, file);
-    if (fs.statSync(sourcePath).isDirectory()) {
-       await processFilesRecursively(sourcePath);
-       return;
+export const checkIfLinkIsActive = (to: string, pathname: string) => {
+  return pathname === to;
+};
+export const getActiveId = (
+  pathname: string,
+  sliderItems: {
+    id: string | number;
+    additionalLinksToMatch: string[];
+    path: string;
+  }[]
+) => {
+  const activeId = sliderItems.filter((s) => {
+    let _res = checkIfLinkIsActive(s.path, pathname);
+    if (s.additionalLinksToMatch && !_res) {
+      try {
+        s?.additionalLinksToMatch?.forEach((v) => {
+          const res = checkIfLinkIsActive(v, pathname);
+          console.log("PATH: ", v);
+          console.log("PATHNAME: ", pathname);
+          console.log("RES: ", res);
+          console.log("########################");
+          if (res) {
+            _res = res;
+            throw Error(
+              "We found a match. We need to jump out. Again, for loops would have been much more elegant."
+            );
+          }
+        });
+      } catch (e) {
+        // intentionally left blank. Again. I wonder when this will also become a stringent security measure.
+      }
     }
-
-    console.log("Source destination is defined as: ", sourcePath);
-    console.log("Handling file: ", sourcePath);
-
-    // if file has extension that is in  [extensionsToProcess], read the whole file.
-    const content = fs.readFileSync(sourcePath, 'utf8');
-
-    fs.writeFileSync("./content.txt", `// ${count}. ${file}: \n` + content + "\n```\n\n", {
-      flag: "a+",
-    });
-
-    console.log("File processing complete.");
-    count++;
-  }
-}
-
-function main() {
-  const sourceDirectory = process.argv[2];
-
-  if (!fs.existsSync(sourceDirectory)) {
-    console.error(`Source directory: ${sourceDirectory} does not exist.`);
-    return;
-  }
-
-  processFilesRecursively(sourceDirectory).then(() => {
-    console.log("Exiting.......");
+    return _res;
   });
-}
+  if (activeId.length) {
+    return activeId[0].id;
+  }
+  return sliderItems[0].id;
+};
+const items = [
+  {
+    id: "1",
+    path: "/test",
+    additionalLinksToMatch: ["/test-match-one", "test-match-one-again"],
+  },
+  {
+    id: "2",
+    path: "/test-two",
+    additionalLinksToMatch: ["/test-match-two", "test-match-two-again"],
+  },
+];
 
-main();
+console.log(getActiveId("/test-match-two-again", items));
