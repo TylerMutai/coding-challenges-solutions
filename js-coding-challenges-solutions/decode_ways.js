@@ -23,8 +23,13 @@
  */
 const numDecodings = (s) => {
   const chars = s.split("");
+  const cache = new Map();
 
   const dfs = (i) => {
+    if(cache.has(i)){
+      return cache.get(i);
+    }
+
     if (i >= chars.length) {
       return 1;
     }
@@ -42,8 +47,9 @@ const numDecodings = (s) => {
         doubleDigitDecode = dfs(i + 2);
       }
     }
-
-    return singleDigitDecode + doubleDigitDecode;
+    const res = singleDigitDecode + doubleDigitDecode;
+    cache.set(i,res);
+    return res;
   };
   return dfs(0);
 };
