@@ -11,22 +11,29 @@
 const uniquePaths = function (m, n) {
   const downDirection = [1, 0];
   const rightDirection = [0, 1];
-  const cache = new Map();
+  let paths = [];
+  const validPaths = new Set();
   // r is row, therefore m
   // c is column, therefore n
 
   // brute force.
   const dfs = (r, c) => {
     if (r >= m || c >= n) {
+      paths = [];
       return 0;
     }
-    if (cache.has(r + c)) {
-      return cache.get(r + c);
+    if (validPaths.has(r + c)) {
+      return 1;
     }
     const right = dfs((r + rightDirection[0]), (c + rightDirection[1]));
     const down = dfs((r + downDirection[0]), (c + downDirection[1]));
+    paths.push(r + c);
     if (r === m - 1 && c === n - 1) {
       // a valid path.
+      for (const p of paths) {
+        validPaths.add(p);
+      }
+      paths = [];
       return 1 + right + down;
     }
     return right + down;
@@ -35,5 +42,5 @@ const uniquePaths = function (m, n) {
   return dfs(0, 0);
 };
 
-// console.log(uniquePaths(3, 7));
 console.log(uniquePaths(3, 2));
+// console.log(uniquePaths(3, 2));
