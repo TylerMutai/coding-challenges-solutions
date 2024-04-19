@@ -14,34 +14,32 @@ const longestCommonSubsequence = function (text1, text2) {
   const t1Chars = text1.split("");
   const t2Chars = text2.split("");
 
-  function recurse(idx1, idx2) {
-    if (idx2 < 0) {
-      return 0;
+  const cache = [];
+  for (let i = 0; i < t1Chars.length + 1; i++) {
+    cache.push([]);
+    for (let f = 0; f < t2Chars.length + 1; f++) {
+      cache[i][f] = -1;
     }
-    if (idx1 < 0) {
-      return 0;
-    }
-
-    if (t1Chars[idx1] === t2Chars[idx2]) {
-      return 1 + recurse(idx1 - 1, idx2 - 1);
-    }
-    const op2 = recurse(idx1 - 2, idx2 - 1);
-    const op3 = recurse(idx1 - 1, idx2 - 2);
-    return Math.max(op2, op3);
   }
 
-  const lastIdx1 = t1Chars.length - 1;
-  const lastIdx2 = t2Chars.length - 1;
-  const op1 = recurse(lastIdx1, lastIdx2);
-  const op2 = recurse(lastIdx1 - 1, lastIdx2);
-  const op3 = recurse(lastIdx1, lastIdx2 - 1);
-  console.log("op1", op1);
-  console.log("op2", op2);
-  console.log("op3", op3);
+  function recurse(idx1, idx2) {
+    if (idx1 === 0 || idx2 === 0) {
+      return 0;
+    }
 
-  return Math.max(op1, Math.max(op2, op3));
+    if (cache[idx1][idx2] !== -1) {
+      return cache[idx1][idx2];
+    }
+
+    if (t1Chars[idx1 - 1] === t2Chars[idx2 - 1]) {
+      cache[idx1][idx2] = 1 + recurse(idx1 - 1, idx2 - 1);
+      return cache[idx1][idx2];
+    }
+    const op2 = recurse(idx1, idx2 - 1);
+    const op3 = recurse(idx1 - 1, idx2);
+    cache[idx1][idx2] = Math.max(op2, op3);
+    return cache[idx1][idx2];
+  }
+
+  return recurse(t1Chars.length, t2Chars.length);
 };
-
-console.log(longestCommonSubsequence("ezupkr", "ubmrapg"));
-// console.log(longestCommonSubsequence("abcde", "ace"));
-// console.log(longestCommonSubsequence("abc", "abc"));
