@@ -12,33 +12,36 @@ const uniquePaths = function (m, n) {
   const downDirection = [1, 0];
   const rightDirection = [0, 1];
   let paths = [];
-  const validPaths = new Set();
-  // r is row, therefore m
-  // c is column, therefore n
+  const traversedPaths = [];
+  for (let i = 0; i < m + 1; i++) {
+    traversedPaths.push([]);
+    for (let f = 0; f < n + 1; f++) {
+      traversedPaths[i][f] = -1;
+    }
+  }
 
   // brute force.
+  // r->m, c->n
   const dfs = (r, c) => {
     if (r >= m || c >= n) {
-      paths = [];
       return 0;
     }
-    if (validPaths.has(r + c)) {
-      return 1;
-    }
-    const right = dfs((r + rightDirection[0]), (c + rightDirection[1]));
-    const down = dfs((r + downDirection[0]), (c + downDirection[1]));
-    paths.push(r + c);
-    if (r === m - 1 && c === n - 1) {
-      // a valid path.
-      for (const p of paths) {
-        validPaths.add(p);
-      }
-      paths = [];
-      return 1 + right + down;
-    }
-    return right + down;
+
+    // move right
+    let movesRight = dfs(r + rightDirection[0], c + rightDirection[1]);
+    // then move down
+    let movesDown = dfs(r + 1 + downDirection[0], c + 1 + downDirection[1]);
+
+    // move down
+    let _movesDown = dfs(r + downDirection[0], c + downDirection[1]);
+    // then move right
+    let _movesRight = dfs(r + 1 + rightDirection[0], c + 1 + rightDirection[1]);
+
+
+    return 1 + movesRight + movesDown + _movesDown + _movesRight;
   };
 
+  console.log(traversedPaths);
   return dfs(0, 0);
 };
 
