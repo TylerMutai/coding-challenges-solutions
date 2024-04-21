@@ -9,9 +9,6 @@
  * The test cases are generated so that the answer will be less than or equal to 2 * 109.
  */
 const uniquePaths = function (m, n) {
-  const downDirection = [1, 0];
-  const rightDirection = [0, 1];
-  let paths = [];
   const traversedPaths = [];
   for (let i = 0; i < m + 1; i++) {
     traversedPaths.push([]);
@@ -23,27 +20,19 @@ const uniquePaths = function (m, n) {
   // brute force.
   // r->m, c->n
   const dfs = (r, c) => {
-    if (r >= m || c >= n) {
-      return 0;
+    if (r === 1 || c === 1) {
+      return 1;
     }
+    if (traversedPaths[r][c] !== -1) {
+      return traversedPaths[r][c];
+    }
+    traversedPaths[r][c] = dfs(r - 1, c) + dfs(r, c - 1);
 
-    // move right
-    let movesRight = dfs(r + rightDirection[0], c + rightDirection[1]);
-    // then move down
-    let movesDown = dfs(r + 1 + downDirection[0], c + 1 + downDirection[1]);
-
-    // move down
-    let _movesDown = dfs(r + downDirection[0], c + downDirection[1]);
-    // then move right
-    let _movesRight = dfs(r + 1 + rightDirection[0], c + 1 + rightDirection[1]);
-
-
-    return 1 + movesRight + movesDown + _movesDown + _movesRight;
+    return traversedPaths[r][c];
   };
 
   console.log(traversedPaths);
-  return dfs(0, 0);
+  return dfs(m, n);
 };
 
 console.log(uniquePaths(3, 2));
-// console.log(uniquePaths(3, 2));
