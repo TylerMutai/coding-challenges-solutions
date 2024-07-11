@@ -29,4 +29,17 @@ function maxProfit(prices) {
   return _maxProfit;
 }
 
+function _maxProfit(prices){
+  // [1,2,3,0,2]
+  // sell + buy + sell + buy = 2 sells, 2 buys
+  // sell + sell + sell + sell - 4 sells
+  // buy + buy + buy + buy - 4 buys
+  // sell + buy + sell + buy + sell = 3 sells, 2 buys
+  // buy + sell + buy + sell = 2 buys, 2 sells
+  // buy + sell + buy + sell + buy = 3 buys, 2 sells
+  // So scenarios are:
+  // 1. sell, then buy
+
+}
+
 console.log(maxProfit([7,1,5,3,6,4]))
