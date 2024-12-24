@@ -26,13 +26,14 @@ function evalRPN(tokens) {
       } else if (tokens[n] === "*") {
         stack.push(op1 * op2);
       } else if (tokens[n] === "/") {
-        const res = `${op1 / op2}`;
+       /* const res = `${op1 / op2}`;
         const ss = res.indexOf(".");
         if(ss === - 1){
           stack.push(parseInt(res))
         } else {
           stack.push(parseInt(res.substring(0, ss + 1)));
-        }
+        }*/
+        stack.push(Math.trunc(op1/op2));
 
       }
       console.log("Stack End After Operand: ", stack);
