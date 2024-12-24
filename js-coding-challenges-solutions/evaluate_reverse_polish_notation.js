@@ -8,13 +8,11 @@
  * Assume that division between integers always truncates toward zero.
  */
 function evalRPN(tokens) {
-  const operands = new Set(["+", "-", "/", "*"]);
-
   let n = 0;
   const stack = [];
 
   while(n < tokens.length) {
-    if (operands.has(tokens[n])) {
+    if(tokens[n] === "+" || tokens[n] === "-" || tokens[n] === "/" || tokens[n] === "*") {
       console.log("Stack Start First Operand: ", stack);
       console.log("Stack Start First Operand: ", tokens[n]);
       const op2 = stack.pop();
