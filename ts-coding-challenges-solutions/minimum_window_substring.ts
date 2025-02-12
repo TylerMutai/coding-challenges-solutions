@@ -11,6 +11,9 @@ function minWindow(s: string, t: string) {
   if (!s.length || !t.length) {
     return "";
   }
+  if (t.length > s.length) {
+    return "";
+  }
 
   const window = new Map<string, number>();
   const countT = new Map<string, number>();
@@ -27,33 +30,33 @@ function minWindow(s: string, t: string) {
 
   const sChars = s.split("");
   let l = 0;
-  for (let r = 0; r < sChars.length; r++) {
+  let r;
+  for (r = 0; r < sChars.length; r++) {
     const c = sChars[r];
 
     // save to window
     window.set(c, (window.get(c) || 0) + 1);
-    if (countT.has(c)) {
 
-      if (window.get(c) === countT.get(c)) {
-        have += 1;
+
+    if (countT.has(c) && window.has(c) && window.get(c)! <= countT.get(c)!) {
+      have += 1;
+    }
+
+    while (have === need) {
+      // Update result substring (which should be the smallest)
+      if (r - l + 1 < resLen) {
+        res = [l, r];
+        resLen = r - l + 1;
       }
 
-      while (have === need) {
-        // Update result substring (which should be the smallest)
-        if (r - l + 1 < resLen) {
-          res = [l, r];
-          resLen = r - l + 1;
-        }
+      // Pop from the left of our window.
+      const currWindowSize = (window.get(sChars[l]) || 1) - 1;
+      window.set(sChars[l], currWindowSize);
 
-        // Pop from the left of our window.
-        const currWindowSize = (window.get(sChars[l]) || 1) - 1;
-        window.set(sChars[l], currWindowSize);
-
-        if (countT.has(s[l]) && currWindowSize < countT.get(s[l])!) {
-          have -= 1;
-        }
-        l += 1;
+      if (countT.has(s[l]) && currWindowSize < countT.get(s[l])!) {
+        have -= 1;
       }
+      l += 1;
     }
   }
 
@@ -64,4 +67,5 @@ function minWindow(s: string, t: string) {
 
 }
 
-console.log(minWindow("OUZODYXAZV", "XYZ"));
+console.log(minWindow("ADOBECODEBANC", "ABC"));
+console.log(minWindow("a", "aa"));
