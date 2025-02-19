@@ -9,37 +9,36 @@
  */
 var KthLargest = /** @class */ (function () {
     function KthLargest(k, nums) {
-        this.priorityHeap = nums.sort(function (a, b) { return b - a; });
+        var _n = nums.sort(function (a, b) { return b - a; });
+        // remove all elements we don't need
+        while (_n.length > k) {
+            _n.pop();
+        }
+        this.priorityHeap = _n;
         this.k = k;
     }
     KthLargest.prototype.add = function (num) {
-        var idx = 0;
-        for (var i = 0; i < this.priorityHeap.length; i += 1) {
-            if (num > this.priorityHeap[i]) {
-                idx = i;
-                break;
-            }
+        this.priorityHeap.push(num);
+        this.priorityHeap.sort(function (a, b) { return b - a; });
+        while (this.priorityHeap.length > this.k) {
+            this.priorityHeap.pop();
         }
-        var newArr = [];
-        for (var count = 0; count < this.priorityHeap.length; count++) {
-            if (count === idx) {
-                newArr.push(num);
-            }
-            newArr.push(this.priorityHeap[count]);
+        if (this.priorityHeap.length < this.k) {
+            return undefined;
         }
-        this.priorityHeap = newArr;
-        console.log("heap: ", this.priorityHeap);
-        for (var i = 0; i < this.priorityHeap.length; i++) {
-            if (i === this.k) {
-                return this.priorityHeap[i];
-            }
-        }
-        return this.priorityHeap[0];
+        return this.priorityHeap[this.priorityHeap.length - 1];
     };
     return KthLargest;
 }());
-var kthLargest = new KthLargest(3, [1, 2, 3, 4, 5]);
-kthLargest.add(3);
-kthLargest.add(3);
-kthLargest.add(3);
-kthLargest.add(5);
+/*const kthLargest = new KthLargest(1, []);
+console.log(kthLargest.add(3));
+console.log(kthLargest.add(-2));
+console.log(kthLargest.add(5));
+console.log(kthLargest.add(10));
+console.log(kthLargest.add(9));*/
+var kthLargest = new KthLargest(3, [1, 2, 3, 3]);
+console.log(kthLargest.add(3)); // return 3
+console.log(kthLargest.add(5)); // return 3
+console.log(kthLargest.add(6)); // return 3
+console.log(kthLargest.add(7)); // return 5
+console.log(kthLargest.add(8)); // return 6

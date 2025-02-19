@@ -13,21 +13,40 @@ class KthLargest {
   private readonly k: number;
 
   constructor(k: number, nums: number[]) {
-    this.priorityHeap = nums.sort((a, b) => b - a);
+    const _n = nums.sort((a, b) => b - a);
+
+    // remove all elements we don't need
+    while (_n.length > k) {
+      _n.pop();
+    }
+    this.priorityHeap = _n;
     this.k = k;
   }
 
   add(num: number) {
     this.priorityHeap.push(num);
     this.priorityHeap.sort((a, b) => b - a);
-    return this.priorityHeap.find((_, i) => i === this.k - 1);
+    while (this.priorityHeap.length > this.k) {
+      this.priorityHeap.pop();
+    }
+    if (this.priorityHeap.length < this.k) {
+      return undefined;
+    }
+    return this.priorityHeap[this.priorityHeap.length - 1];
   }
 }
 
 
-const kthLargest = new KthLargest(1, []);
+/*const kthLargest = new KthLargest(1, []);
 console.log(kthLargest.add(3));
 console.log(kthLargest.add(-2));
 console.log(kthLargest.add(5));
 console.log(kthLargest.add(10));
-console.log(kthLargest.add(9));
+console.log(kthLargest.add(9));*/
+
+const kthLargest = new KthLargest(3, [1, 2, 3, 3]);
+console.log(kthLargest.add(3));   // return 3
+console.log(kthLargest.add(5));   // return 3
+console.log(kthLargest.add(6));   // return 3
+console.log(kthLargest.add(7));   // return 5
+console.log(kthLargest.add(8));   // return 6
