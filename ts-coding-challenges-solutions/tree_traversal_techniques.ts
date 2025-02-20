@@ -5,6 +5,8 @@
  * - In order traversal:  Left -> Root -> Right
  * - Pre order traversal:  Root -> Left -> Right
  * - Post order traversal: Left -> Right -> Root
+ *
+ * 2. Level Order Traversal or Breadth First Search or BFS
  */
 
 class Node {
@@ -46,6 +48,30 @@ const postOrderTraversal = (node?: Node) => {
   postOrderTraversalArray.push(node.data);
 };
 
+const levelOrderTraversal = (node?: Node) => {
+  const levelOrderTraversalArray: any[] = [];
+
+  const queue: any[] = [];
+  if (node) {
+    queue.push(node);
+  }
+
+  while (queue.length) {
+    const _node = queue.shift();
+    levelOrderTraversalArray.push(_node?.data);
+
+    if (_node?.left) {
+      queue.push(_node.left);
+    }
+
+    if (_node?.right) {
+      queue.push(_node.right);
+    }
+
+  }
+  return levelOrderTraversalArray;
+};
+
 
 const root = new Node(1);
 root.left = new Node(2);
@@ -61,3 +87,5 @@ console.log(preOrderTraversalArray);
 
 postOrderTraversal(root);
 console.log(postOrderTraversalArray);
+
+console.log(levelOrderTraversal(root));
