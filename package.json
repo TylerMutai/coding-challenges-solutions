@@ -2,6 +2,7 @@
   "name": "text-editing-ai",
   "version": "1.0.0",
   "dependencies": {
+    "@datastructures-js/priority-queue": "^6.3.2",
     "@types/node": "^20.2.1",
     "cheerio": "^1.0.0-rc.12",
     "openai": "^4.28.0",
