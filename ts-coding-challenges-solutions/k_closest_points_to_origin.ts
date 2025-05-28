@@ -23,9 +23,7 @@ const kClosest = (points: number[][], k: number) => {
     distances.set(distance, distancesValues);
   }
 
-  console.log("distances", distances);
   const orderedKeys = Array.from(distances.keys()).sort((a, b) => a - b);
-  console.log("orderedKeys", orderedKeys);
 
   const result: number[][] = [];
   let i = 0;
