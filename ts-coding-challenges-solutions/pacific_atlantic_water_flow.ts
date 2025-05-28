@@ -43,7 +43,7 @@ const pacificAtlantic = (heights: number[][]) => {
     dfs(r + down[0], c + down[1], heights[r][c], visits);
   };
 
-  // get cells bordering the pacific
+  // get cells bordering the pacific & atlantic (separately)
   for (let r = 0; r < rowLength; r++) {
     dfs(r, 0, heights[r][0], pacific);
     dfs(r, colLength - 1, heights[r][colLength - 1], atlantic);
@@ -53,7 +53,7 @@ const pacificAtlantic = (heights: number[][]) => {
     dfs(rowLength - 1, c, heights[rowLength - 1][c], atlantic);
   }
 
-  // check for cells in both the atlantic and the pacific.
+  // check for cells in both the atlantic and the pacific sets (cells which reach both oceans) .
   const res: number[][] = [];
   for (let r = 0; r < rowLength; r++) {
     for (let c = 0; c < colLength; c++) {
