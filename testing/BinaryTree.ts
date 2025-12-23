@@ -77,8 +77,8 @@ class BNode {
       }
 
       // scenario 3. the node has left and right children
-      // get the minimum node on the right side of the tree (and set this node as the root since this node will have
-      // everything to it's  right larger or equal to itself. get minimum node (do an inorder traversal)
+      // get the minimum node on the right side of the tree, and set this node as the root since this node will have
+      // everything to it's  right larger or equal to itself, and is also larger than everything on its lef. Get minimum node (do an inorder traversal)
       let minimumNode: BNode = new BNode(Number.MAX_VALUE, null, null);
       const inOrderTraversal = (node: BNode) => {
         if (node.left != null) {
